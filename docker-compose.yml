@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./myapp-backend
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./myapp-backend:/usr/src/app
+    environment:
+      - NODE_ENV=production
+      - DB_HOST=mysql
+      - DB_USER=root
+      - DB_PASSWORD=root  # Assure-toi que cela correspond à la configuration de ton MySQL
+      - DB_NAME=nodeexpressDB
+
+  frontend:
+    build:
+      context: ./myapp
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./myapp:/app
+    environment:
+      - NODE_ENV=production
+
+  mysql:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root  # Définit le mot de passe pour l'utilisateur root
+      MYSQL_DATABASE: nodeexpressDB
+      # Supprime MYSQL_USER et MYSQL_PASSWORD car ils ne sont pas nécessaires pour l'utilisateur root
+    ports:
+      - "3306:3306"
